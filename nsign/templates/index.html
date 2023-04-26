@@ -1,0 +1,62 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'documents/css/index.css' %}">
+</head>
+<body>
+    <div class="head"></div>
+    <div class="body">
+        <div class="table">
+            <div class="table-head">
+                <span class="col col-1">Индекс</span>
+                <span class="col col-2">Наименование</span>
+                <span class="col col-3">Содержание</span>
+                <span class="col col-4">Последняя версия</span>
+            </div>
+            <div class="table-body">
+                {% for update_form in update_forms %}
+                    <form class="row" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <span class="col col-1">{{ update_form.obj.id }}</span>
+                        {{ update_form.form.name }}
+                        {{ update_form.form.description }}
+                        <span class="col col-4">{{ update_form.obj.last_version }}</span>
+                        <button class="col col-5" type="submit" formaction="{% url 'update' pk=update_form.obj.id %}">Изменить документ</button>
+                        <button class="col col-6" type="submit" formaction="{% url 'delete' pk=update_form.obj.id %}">Удалить документ</button>
+                    </form>
+                    <div class="version-head">
+                        <span class="col col-1">Версии документа</span>
+                        <span class="col col-2">Наименование</span>
+                        <span class="col col-3">Содержание</span>
+                        <span class="col col-4">Версия</span>
+                    </div>
+                    {% for version in update_form.obj.versions.all %}
+                        <div class="version-row">
+                            <span class="col col-1"></span>
+                            <span class="col col-2">{{ version.name }}</span>
+                            <span class="col col-3">{{ version.description }}</span>
+                            <span class="col col-4">{{ version.version }}</span>
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        </div>
+        <form class="new-document" method="post" action="{% url 'create' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="table-head">
+                <span class="col">Наименование</span>
+                <span class="col">Содержание</span>
+            </div>
+            <div class="table-row">
+                {{ form.name }}
+                {{ form.description }}
+            </div>
+            <button class="add-doc-btn" type="submit">Добавить новый документ</button>
+        </form>
+    </div>
+</body>
+</html>
