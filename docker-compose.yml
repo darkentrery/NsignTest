@@ -1,0 +1,21 @@
+version: '3.9'
+
+volumes:
+  static_nsign:
+  media_nsign:
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+    container_name: web_nsign
+    command: bash -c "python3 manage.py collectstatic --noinput && 
+                      python3 manage.py runserver 0.0.0.0:8000"
+    ports:
+      - "8000:8000"
+    volumes:
+      - static_nsign:/usr/src/app
+      - media_nsign:/usr/src/app
+    env_file:
+      - ./.env
